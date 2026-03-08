@@ -1,0 +1,59 @@
+#include <Wire.h>
+#include "MAX30105.h"
+#include "heartRate.h"
+#include <LiquidCrystal_I2C.h>
+
+MAX30105 particleSensor;
+LiquidCrystal_I2C lcd(0x27,16,2);
+
+long lastBeat = 0;
+float beatsPerMinute;
+
+void setup()
+{
+  Serial.begin(9600);
+
+  lcd.init();
+  lcd.backlight();
+
+  if (!particleSensor.begin(Wire, I2C_SPEED_STANDARD))
+  {
+    lcd.print("MAX30102 Error");
+    while (1);
+  }
+
+  particleSensor.setup();
+  particleSensor.setPulseAmplitudeRed(0x0A);
+  particleSensor.setPulseAmplitudeGreen(0);
+
+  lcd.setCursor(0,0);
+  lcd.print("Place Finger");
+}
+
+void loop()
+{
+  long irValue = particleSensor.getIR();
+
+  if (checkForBeat(irValue) == true)
+  {
+    long delta = millis() - lastBeat;
+    lastBeat = millis();
+
+    beatsPerMinute = 60 / (delta / 1000.0);
+
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print("Heart Rate");
+
+    lcd.setCursor(0,1);
+    lcd.print("BPM: ");
+    lcd.print(beatsPerMinute);
+  }
+
+  if (irValue < 50000)
+  {
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print("Place Finger");
+  }
+}
