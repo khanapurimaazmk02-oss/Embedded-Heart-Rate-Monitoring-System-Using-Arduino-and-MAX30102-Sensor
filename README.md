@@ -1,0 +1,2 @@
+# Embedded-Heart-Rate-Monitoring-System-Using-Arduino-and-MAX30102-Sensor
+This project implements a real-time heart rate monitoring system using an Arduino Uno R3, MAX30102 pulse sensor, and a 16×2 LCD display. The sensor detects blood flow changes to calculate heart rate (BPM), and the readings are displayed on the LCD, demonstrating embedded systems and sensor integration for basic health monitoring.
